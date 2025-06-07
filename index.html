@@ -208,9 +208,102 @@
       #ecoopti-trailer-wrapper .ultimate-cta-button:hover{transform:scale(1.06) rotate(-.5deg);box-shadow:0 0 30px var(--primary-green),0 0 50px var(--secondary-green),0 0 75px var(--accent-turquoise),0 6px 20px rgba(0,0,0,.35),inset 0 0 18px rgba(255,255,255,.5);animation:ctaHoverFlow 1.8s infinite linear alternate;}
       @keyframes ctaHoverFlow{0%{background-position:0% 50%;}100%{background-position:100% 50%;}}
       #ecoopti-trailer-wrapper .ultimate-cta-button .subtext{font-size:clamp(.5em,1.4vw,.65em);display:block;opacity:.8;font-weight:600;white-space:normal;margin-top:.2em;}
+    
+      /* Cookie Consent Banner Styles */
+      .cookie-consent-banner {
+          position: fixed;
+          bottom: 0;
+          left: 0;
+          width: 100%;
+          background-color: var(--color-secondary, #1f4532);
+          color: #fff;
+          padding: 20px;
+          box-shadow: 0 -2px 10px rgba(0,0,0,0.2);
+          z-index: 2000;
+          transform: translateY(100%);
+          transition: transform 0.5s ease-in-out;
+          font-family: var(--font-family-base, 'Roboto', sans-serif);
+      }
+
+      .cookie-consent-banner.active {
+          transform: translateY(0);
+      }
+
+      .cookie-consent-content {
+          display: flex;
+          align-items: center;
+          justify-content: space-between;
+          flex-wrap: wrap;
+          gap: 20px;
+          max-width: 1200px;
+          margin: 0 auto;
+      }
+
+      .cookie-consent-text {
+          flex: 1 1 60%;
+          margin: 0;
+          font-size: 0.95rem;
+          line-height: 1.6;
+          min-width: 300px;
+      }
+
+      .cookie-consent-link {
+          color: var(--color-primary-light, #4CAF50);
+          text-decoration: underline;
+      }
+
+      .cookie-consent-link:hover {
+          color: #fff;
+      }
+
+      .cookie-consent-buttons {
+          display: flex;
+          gap: 15px;
+          flex-wrap: nowrap;
+      }
+
+      .cookie-consent-buttons .btn {
+          padding: 10px 24px;
+          font-size: 0.9rem;
+          white-space: nowrap;
+      }
+
+      .cookie-consent-buttons .btn-secondary {
+          background: transparent;
+          color: #fff;
+          border-color: #fff;
+      }
+
+      .cookie-consent-buttons .btn-secondary:hover {
+          background: rgba(255, 255, 255, 0.15);
+      }
+
+      @media (max-width: 768px) {
+          .cookie-consent-content {
+              flex-direction: column;
+              align-items: flex-start;
+          }
+          .cookie-consent-buttons {
+              width: 100%;
+              justify-content: flex-start;
+              margin-top: 15px;
+          }
+      }
     </style>
 </head>
 <body>
+    <div id="cookie-consent-banner" class="cookie-consent-banner">
+        <div class="cookie-consent-content">
+            <p class="cookie-consent-text">
+                אנו משתמשים בעוגיות כדי לשפר את חווית הגלישה שלך, להציג מודעות או תוכן מותאמים אישית ולנתח את התנועה באתר. בלחיצה על "קבל הכל", אתה מסכים לשימוש שלנו בעוגיות.
+                <a href="/privacy-policy.html" class="cookie-consent-link">מדיניות הפרטיות</a>
+            </p>
+            <div class="cookie-consent-buttons">
+                <button id="cookie-consent-accept" class="btn btn-primary">קבל הכל</button>
+                <button id="cookie-consent-decline" class="btn btn-secondary">דחה</button>
+            </div>
+        </div>
+    </div>
     <a href="#main-content" class="skip-link">Skip to Main Content</a>
     <main id="main-content" role="main">
         <div class="container hero">
@@ -530,6 +623,45 @@ All reports are exportable as PDF or Excel files with interactive charts that up
     const scenes=gsap.utils.toArray('#ecoopti-trailer-wrapper .scene');const durations=[1850,2500,3600,3800,3500,5500];let current=0;gsap.set(scenes,{autoAlpha:0,visibility:'hidden'});function splitText(el,mode='chars'){const txt=el.dataset.textChars||el.dataset.textWords||el.innerText;el.innerHTML='';let parts=mode==='words'?txt.split(/(\s+)/).filter(p=>p.trim()||p.match(/\s+/)):Array.from(txt);return parts.map(p=>{const span=document.createElement('span');span.className=mode==='words'?'word':'char';span.innerHTML=p===' '||p==='\n'||p==='\r'?'&nbsp;':p;if(mode==='words'&&p.trim()&&!p.match(/\s+/))span.style.marginRight='.2em';span.style.display='inline-block';el.appendChild(span);return span;});}function animateIn(scene,idx){const tl=gsap.timeline();tl.set(scene,{autoAlpha:1,visibility:'visible'});tl.fromTo(scene,{scale:.8,yPercent:10,filter:'blur(12px)'},{scale:1,yPercent:0,filter:'blur(0px)',duration:1.3,ease:"power2.out"});if(idx===0){const els=scene.querySelectorAll('.chaos-text');tl.to(els,{transform:()=>`rotate(${Math.random()*40-20}deg) scale(1)`,autoAlpha:()=>Math.random()*.35+.2,duration:.3,stagger:{each:.05,from:"random"}},.1);tl.to(els,{autoAlpha:0,scale:1.7,filter:'blur(7px)',duration:.4,stagger:{each:.03}},">.85");}if(idx===1){const logo=splitText(scene.querySelector('.logo-title'),'chars');tl.fromTo(logo,{autoAlpha:0,scale:1.7,y:-35,filter:'blur(7px)',skewX:15},{autoAlpha:1,scale:1,y:0,filter:'blur(0px)',skewX:0,duration:.65,stagger:.045,ease:"expo.out"},.6);const tagWords=splitText(scene.querySelector('.tagline'),'words');tl.fromTo(tagWords,{autoAlpha:0,y:22,rotateX:-60,transformOrigin:"top center"},{autoAlpha:1,y:0,rotateX:0,duration:.5,stagger:.07,ease:"back.out(1)"},">-.35");}if(idx===2){tl.fromTo(scene.querySelector('.scene-supertitle'),{autoAlpha:0,y:-15},{autoAlpha:1,y:0,duration:.4,ease:"power1.out"},.35);const titleChars=splitText(scene.querySelector('.scene-title'),'chars');tl.fromTo(titleChars,{autoAlpha:0,x:-15,skewY:7},{autoAlpha:1,x:0,skewY:0,duration:.3,stagger:.03,ease:"power1.out"},">-.1");scene.querySelectorAll('.input-field-visual').forEach((fld,i)=>{const emo=fld.querySelector('.emoji');tl.fromTo(fld,{autoAlpha:0,scale:.65,rotateZ:-10},{autoAlpha:1,scale:1,rotateZ:0,duration:.3,ease:"back.out(1.4)",delay:i*.1},">-.2");if(emo){tl.fromTo(emo,{scale:.5,opacity:0},{scale:1,opacity:1,duration:.3,ease:"back.out(2)"},"<.1");}});const descWords=splitText(scene.querySelector('.step-description'),'words');tl.fromTo(descWords,{autoAlpha:0,y:15},{autoAlpha:1,y:0,duration:.3,stagger:.06,ease:"power1.out"},">-.1");}if(idx===3){if(aiCanvas){aiCanvas.width=aiCanvas.offsetWidth||300;aiCanvas.height=aiCanvas.offsetHeight||300;aiCanvas.style.opacity=0;if(!aiAnimId)drawAI();}tl.fromTo(scene.querySelector('.scene-supertitle'),{autoAlpha:0,y:-15},{autoAlpha:1,y:0,duration:.4,ease:"power1.out"},.35);const aiChars=splitText(scene.querySelector('.scene-title'),'chars');aiChars.forEach(ch=>{if(ch.textContent==='💡'){gsap.set(ch,{color:"var(--highlight-white)"});tl.fromTo(ch,{autoAlpha:0,scale:2,y:-10,color:"var(--warning-yellow)",filter:'blur(3px)'},{autoAlpha:1,scale:1,y:0,color:"var(--highlight-white)",filter:'blur(0px)',duration:.7,ease:"elastic.out(1,.5)"},">-.1");}else{tl.fromTo(ch,{autoAlpha:0,filter:'blur(4px)',scale:1.4,y:8},{autoAlpha:1,filter:'blur(0px)',scale:1,y:0,duration:.55,ease:"power2.out",stagger:.04},">-.55");}});if(aiCanvas){tl.to(aiCanvas,{opacity:1,duration:.8,ease:"power1.inOut"},">-.2");}const aiDesc=splitText(scene.querySelector('.step-description'),'words');aiDesc.forEach(w=>{let iy=15,isz=1;if(w.textContent.includes('🧠')||w.textContent.includes('✨')){iy=20;isz=1.3;}tl.fromTo(w,{autoAlpha:0,y:iy,scale:isz,filter:'blur(1px)'},{autoAlpha:1,y:0,scale:1,filter:'blur(0px)',duration:.35,ease:"power2.out",stagger:.06},">-.3");});}if(idx===4){if(pkgCanvas){pkgCanvas.width=pkgCanvas.offsetWidth||300;pkgCanvas.height=pkgCanvas.offsetHeight||300;pkgCanvas.style.opacity=0;if(!pkgAnimId)drawPkg();}tl.fromTo(scene.querySelector('.scene-supertitle'),{autoAlpha:0,y:-15},{autoAlpha:1,y:0,duration:.4,ease:"power1.out"},.35);
                         const pkgChars = splitText(scene.querySelector('.scene-title'), 'words'); 
                         tl.fromTo(pkgChars,{autoAlpha:0,y:15,scale:.85,filter:'blur(2px)'},{autoAlpha:1,y:0,scale:1,filter:'blur(0px)',duration:.55,stagger:.035,ease:"elastic.out(1,.55)"},">-.1");if(pkgCanvas){tl.to(pkgCanvas,{opacity:1,duration:.8,ease:"power1.inOut"},">-.2");}tl.fromTo(scene.querySelector('.xray-text'),{autoAlpha:0,scale:.35,rotate:-25,filter:'blur(3px)'},{autoAlpha:1,scale:1,rotate:0,filter:'blur(0px)',duration:.6,ease:"back.out(1.3)"},">.2");const pkgDescWords=splitText(scene.querySelector('.step-description'),'words');tl.fromTo(pkgDescWords,{autoAlpha:0,x:-18,opacity:0},{autoAlpha:1,x:0,duration:.4,stagger:.06,ease:"power1.out"},">-.2");}if(idx===5){tl.fromTo(scene.querySelector('.scene-supertitle'),{autoAlpha:0,y:-15},{autoAlpha:1,y:0,duration:.4,ease:"power1.out"},.35);const impChars=splitText(scene.querySelector('.scene-title'),'chars');tl.fromTo(impChars,{autoAlpha:0,scale:.65,rotateY:60,filter:'blur(1.5px)'},{autoAlpha:1,scale:1,rotateY:0,filter:'blur(0px)',duration:.5,stagger:.04,ease:"power2.out"},">-.1");scene.querySelectorAll('.impact-stat-visual').forEach((st,i)=>{tl.fromTo(st,{autoAlpha:0,y:35,filter:'blur(3.5px)'},{autoAlpha:1,y:0,filter:'blur(0px)',duration:.6,ease:"back.out(1)",delay:i*.2},">-.3");const valEl=st.querySelector('.value');if(valEl&&valEl.dataset.value){tl.to(valEl,{duration:1.3,textContent:parseInt(valEl.dataset.value),roundProps:"textContent",ease:"power1.out",delay:.07},"<.05");}});const impWords=splitText(scene.querySelector('.impact-text'),'words');tl.fromTo(impWords,{autoAlpha:0,scale:1.35,filter:'blur(2px)'},{autoAlpha:1,scale:1,filter:'blur(0px)',duration:.4,stagger:.07,ease:"power1.inOut"},">-.2");const finChars=splitText(scene.querySelector('.final-title'),'chars');tl.fromTo(finChars,{autoAlpha:0,yPercent:70,rotateX:-30,transformOrigin:"bottom",filter:'blur(3.5px)'},{autoAlpha:1,yPercent:0,rotateX:0,filter:'blur(0px)',duration:.04,stagger:.04,ease:"expo.out"},">-.1");tl.fromTo(scene.querySelector('.ultimate-cta-button'),{autoAlpha:0,scale:.45,y:70,rotateZ:15},{autoAlpha:1,scale:1,y:0,rotateZ:0,duration:.8,ease:"elastic.out(1,.3)"},">-.4");}return tl;}function transition(toIdx){if(!scenes||scenes.length===0)return;const oldS=scenes[current],newS=scenes[toIdx];if(current===3&&toIdx!==3&&aiAnimId){cancelAnimationFrame(aiAnimId);aiAnimId=null;if(aiCanvas)gsap.to(aiCanvas,{opacity:0,duration:.2});}if(current===4&&toIdx!==4&&pkgAnimId){cancelAnimationFrame(pkgAnimId);pkgAnimId=null;if(pkgCanvas)gsap.to(pkgCanvas,{opacity:0,duration:.2});}const tl=gsap.timeline({onComplete:()=>{current=toIdx;if(scenes.length>0&&durations.length>0){if(current<scenes.length-1||durations.length>scenes.length){setTimeout(()=>transition((current+1)%scenes.length),durations[current%durations.length]);}else if(current===scenes.length-1){setTimeout(()=>transition(0),durations[current]);}}}});tl.to(oldS,{autoAlpha:0,scale:.9,yPercent:-7,filter:'blur(10px)',duration:.8,ease:"power1.in"});tl.set(oldS,{visibility:'hidden'});tl.add(animateIn(newS,toIdx),">-.1");}if(scenes&&scenes.length>0&&durations.length>0){animateIn(scenes[0],0);setTimeout(()=>transition(1),durations[0]);}});
+    </script>
+    <script>
+    document.addEventListener('DOMContentLoaded', () => {
+        const consentBanner = document.getElementById('cookie-consent-banner');
+        const acceptButton = document.getElementById('cookie-consent-accept');
+        const declineButton = document.getElementById('cookie-consent-decline');
+        const consentKey = 'ecoopti_cookie_consent';
+
+        // Check if consent has already been given
+        const hasConsent = localStorage.getItem(consentKey);
+
+        if (!hasConsent) {
+            // Show the banner if no consent is stored
+            setTimeout(() => {
+                consentBanner.classList.add('active');
+            }, 500); // Small delay to ensure page is loaded
+        }
+
+        const giveConsent = (consentValue) => {
+            localStorage.setItem(consentKey, consentValue);
+            consentBanner.classList.remove('active');
+            // Optional: you can add a small delay before hiding for a smoother effect
+            setTimeout(() => {
+                consentBanner.style.display = 'none';
+            }, 500);
+        };
+
+        acceptButton.addEventListener('click', () => {
+            giveConsent('accepted');
+            // Here you can initialize analytics scripts like Google Analytics
+            // gtag('consent', 'update', { 'analytics_storage': 'granted' });
+        });
+
+        declineButton.addEventListener('click', () => {
+            giveConsent('declined');
+            // Handle declined consent - analytics will remain disabled
+            // gtag('consent', 'update', { 'analytics_storage': 'denied' });
+        });
+    });
     </script>
 </body>
 </html>
